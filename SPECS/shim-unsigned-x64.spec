@@ -18,7 +18,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              15.7
-Release:              0.el8
+Release:              1.el8
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
@@ -34,9 +34,12 @@ Source100:            shim-find-debuginfo.sh
 Source90000:          sbat.ciq.csv
 Source90001:          ciq_sb_ca.der
 
-
-
 %include %{SOURCE4}
+
+
+# Commit 7c7642530fab73facaf3eac233cfbce29e10b0ef from Github, enabling NX-compat
+Patch1:     0001-Enable-the-NX-compatibility-flag-by-default.patch
+
 
 BuildRequires:        gcc make
 BuildRequires:        elfutils-libelf-devel
@@ -104,6 +107,7 @@ git config --unset user.name
 mkdir build-%{efiarch}
 mkdir build-%{efialtarch}
 cp %{SOURCE90000} data/
+
 
 %build
 COMMITID=$(cat commit)
@@ -181,6 +185,9 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Fri Mar 24 2023 Skip Grube <sgrube@ciq.co> - 15.7-1
+- Added NX-enabling patch from upstream
+
 * Tue Mar 21 2023 Skip Grube <sgrube@ciq.co> - 15.7-0
 - Upgrading to Shim 15.7 for CIQ
 
