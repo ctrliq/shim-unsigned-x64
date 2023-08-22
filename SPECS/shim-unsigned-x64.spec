@@ -18,7 +18,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              15.7
-Release:              1.el8
+Release:              2.el8
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
@@ -185,6 +185,9 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Tue Aug 22 2023 Skip Grube <sgrube@ciq.com> - 15.7-2
+- Added real CA from CIQ IT, fixed SBAT
+
 * Fri Mar 24 2023 Skip Grube <sgrube@ciq.co> - 15.7-1
 - Added NX-enabling patch from upstream
 
