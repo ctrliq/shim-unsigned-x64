@@ -39,7 +39,7 @@ Source90001:          ciq_sb_ca.der
 
 # Commit 7c7642530fab73facaf3eac233cfbce29e10b0ef from Github, enabling NX-compat
 Patch1:     0001-Enable-the-NX-compatibility-flag-by-default.patch
-
+Patch2:     buggy-binutils.patch
 
 BuildRequires:        gcc make
 BuildRequires:        elfutils-libelf-devel
@@ -185,6 +185,9 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Thr Oct 22 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-3
+- Enable fix for buggy binutils
+
 * Tue Aug 22 2023 Skip Grube <sgrube@ciq.com> - 15.7-2
 - Added real CA from CIQ IT, fixed SBAT
 

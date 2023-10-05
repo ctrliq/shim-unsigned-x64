@@ -1,0 +1,88 @@
+From e1838b95e9ec4f48bd8c4d32cecbb8de6599842a Mon Sep 17 00:00:00 2001
+From: Your Name <you@example.com>
+Date: Fri, 17 Mar 2023 11:19:56 +0100
+Subject: [PATCH] Make sbat_var.S parse right with buggy gcc/binutils
+
+---
+ include/test.mk |  2 +-
+ sbat_var.S      |  6 ++++--
+ test-sbat.c     | 27 +++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 3 deletions(-)
+
+diff --git a/include/test.mk b/include/test.mk
+index c0e2409..c37b844 100644
+--- a/include/test.mk
++++ b/include/test.mk
+@@ -92,7 +92,7 @@ test-mock-variables: CFLAGS+=-DHAVE_SHIM_LOCK_GUID
+ test-mok-mirror_FILES = mok.c globals.c tpm.c lib/guid.c lib/variables.c mock-variables.c
+ test-mok-mirror: CFLAGS+=-DHAVE_START_IMAGE -DHAVE_SHIM_LOCK_GUID
+ 
+-test-sbat_FILES = csv.c lib/variables.c lib/guid.c sbat_var.S
++test-sbat_FILES = csv.c lib/variables.c lib/guid.c sbat_var.S mock-variables.c
+ test-sbat :: CFLAGS+=-DHAVE_GET_VARIABLE -DHAVE_GET_VARIABLE_ATTR -DHAVE_SHIM_LOCK_GUID
+ 
+ test-str_FILES = lib/string.c
+diff --git a/sbat_var.S b/sbat_var.S
+index a115077..0543881 100644
+--- a/sbat_var.S
++++ b/sbat_var.S
+@@ -14,7 +14,9 @@ sbat_var_payload_header:
+ .Lsbat_var_payload_header_end:
+ 	.balign	1, 0
+ .Lsbat_var_previous:
+-	.asciz SBAT_VAR_PREVIOUS
++	.ascii SBAT_VAR_PREVIOUS
++  .byte 0
+ 	.balign	1, 0
+ .Lsbat_var_latest:
+-	.asciz SBAT_VAR_LATEST
++	.ascii SBAT_VAR_LATEST
++  .byte 0
+diff --git a/test-sbat.c b/test-sbat.c
+index 72bebe7..3a9c0f2 100644
+--- a/test-sbat.c
++++ b/test-sbat.c
+@@ -1107,6 +1107,32 @@ test_preserve_sbat_uefi_variable_bad_short(void)
+ 		return 0;
+ }
+ 
++static int
++test_sbat_var_asciz(void)
++{
++	EFI_STATUS status;
++	char buf[1024] = "";
++	UINT32 attrs = 0;
++	UINTN size = sizeof(buf);
++	char expected[] = SBAT_VAR_PREVIOUS;
++
++	status = set_sbat_uefi_variable();
++	if (status != EFI_SUCCESS)
++		return -1;
++
++	status = RT->GetVariable(SBAT_VAR_NAME, &SHIM_LOCK_GUID, &attrs, &size, buf);
++	if (status != EFI_SUCCESS)
++		return -1;
++
++	if (size < (strlen(SBAT_VAR_SIG) + 2) || size != strlen(expected))
++		return -1;
++
++	if (strncmp(expected, buf, size) != 0)
++		return -1;
++
++	return 0;
++}
++
+ int
+ main(void)
+ {
+@@ -1154,6 +1180,7 @@ main(void)
+ 	test(test_preserve_sbat_uefi_variable_version_newerlonger);
+ 	test(test_preserve_sbat_uefi_variable_version_older);
+ 	test(test_preserve_sbat_uefi_variable_version_olderlonger);
++	test(test_sbat_var_asciz);
+ 
+ 	return 0;
+ }
+-- 
+2.31.1
+
