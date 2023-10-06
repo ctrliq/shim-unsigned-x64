@@ -1,6 +1,6 @@
-From e1838b95e9ec4f48bd8c4d32cecbb8de6599842a Mon Sep 17 00:00:00 2001
-From: Your Name <you@example.com>
-Date: Fri, 17 Mar 2023 11:19:56 +0100
+From 657b2483ca6e9fcf2ad8ac7ee577ff546d24c3aa Mon Sep 17 00:00:00 2001
+From: pjones@redhat.com
+Date: Mon Dec 5 17:57:36 2022 -0500
 Subject: [PATCH] Make sbat_var.S parse right with buggy gcc/binutils
 
 ---
