@@ -18,7 +18,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              15.7
-Release:              2.el8
+Release:              3.el8
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
@@ -185,7 +185,7 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
-* Thr Oct 22 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-3
+* Thu Oct 22 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-3
 - Enable fix for buggy binutils
 
 * Tue Aug 22 2023 Skip Grube <sgrube@ciq.com> - 15.7-2
