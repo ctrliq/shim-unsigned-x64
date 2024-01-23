@@ -17,8 +17,8 @@
 %global shimaltdir %{shimversiondir}/%{efialtarch}
 
 Name:                 shim-unsigned-%{efiarch}
-Version:              15.7
-Release:              4.el8
+Version:              15.8
+Release:              0.el8
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
@@ -35,9 +35,6 @@ Source90000:          sbat.ciq.csv
 Source90001:          ciq_sb_ca.der
 
 %include %{SOURCE4}
-
-
-Patch1:     buggy-binutils.patch
 
 BuildRequires:        gcc make
 BuildRequires:        elfutils-libelf-devel
@@ -183,10 +180,13 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Tue Jan 23 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
+- Upgrading to Shim 15.8 For CIQ
+
 * Mon Nov 20 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-4
 - Removing NX-enabling patch due to NX not being compatible with grub2 and kernel at this time
 
-* Thu Oct 22 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-3
+* Sun Oct 22 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-3
 - Enable fix for buggy binutils
 
 * Tue Aug 22 2023 Skip Grube <sgrube@ciq.com> - 15.7-2
