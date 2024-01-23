@@ -180,7 +180,7 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
-* Tue Jan 23 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
+* Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
 
 * Mon Nov 20 2023 Jason Rodriguez <jrodriguez@ciq.com> - 15.7-4
