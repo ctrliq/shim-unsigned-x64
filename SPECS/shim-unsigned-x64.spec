@@ -177,7 +177,7 @@ cd ..
 
 %files -n shim-unsigned-%{efialtarch}-debuginfo -f build-%{efialtarch}/debugfiles.list
 
-%files debugsource -f build-%{efiarch}/debugsource.list
+%files  debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
