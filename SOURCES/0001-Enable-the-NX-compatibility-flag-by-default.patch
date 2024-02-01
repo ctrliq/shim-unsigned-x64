@@ -1,0 +1,44 @@
+From 7c7642530fab73facaf3eac233cfbce29e10b0ef Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Thu, 17 Nov 2022 12:31:31 -0500
+Subject: [PATCH] Enable the NX compatibility flag by default.
+
+Currently by default, when we build shim we do not set the PE
+NX-compatibility DLL Characteristic flag.  This signifies to the
+firmware that shim (including the components it loads) is not prepared
+for several related firmware changes:
+
+- non-executable stack
+- non-executable pages from AllocatePages()/AllocatePool()/etc.
+- non-writable 0 page (not strictly related but some firmware will be
+  transitioning at the same time)
+- the need to use the UEFI 2.10 Memory Attribute Protocol to set page
+  permissions.
+
+This patch changes that default to be enabled by default.  Distributors
+of shim will need to ensure that either their builds disable this bit
+(using "post-process-pe -N"), or that the bootloaders and kernels you
+support loading are all compliant with this change.  A new make
+variable, POST_PROCESS_PE_FLAGS, has been added to simplify doing so.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+---
+ post-process-pe.c | 2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/post-process-pe.c b/post-process-pe.c
+index de8f4a3..f39fddd 100644
+--- a/post-process-pe.c
++++ b/post-process-pe.c
+@@ -42,7 +42,7 @@ static int verbosity;
+ 		0;                                               \
+ 	})
+ 
+-static bool set_nx_compat = false;
++static bool set_nx_compat = true;
+ 
+ typedef uint8_t UINT8;
+ typedef uint16_t UINT16;
+-- 
+2.31.1
+
