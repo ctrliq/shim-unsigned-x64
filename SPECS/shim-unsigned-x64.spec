@@ -2,12 +2,6 @@
 %global gnuefi_vre 1:3.0.5-6
 %global openssl_vre 1.0.2j
 
-%global debug_package %{nil}
-%global __debug_package 1
-%global _binaries_in_noarch_packages_terminate_build 0
-%global __debug_install_post %{SOURCE100} x64 ia32
-%undefine _debuginfo_subpackages
-
 %global efidir %(eval echo $(grep ^ID= /etc/os-release | sed -e 's/^ID=//' -e 's/rhel/rocky/'))
 %global shimrootdir %{_datadir}/shim/
 %global shimversiondir %{shimrootdir}/%{version}-%{release}
@@ -16,18 +10,26 @@
 %global efialtarch ia32
 %global shimaltdir %{shimversiondir}/%{efialtarch}
 
+%global debug_package %{nil}
+%global __debug_package 1
+%global _binaries_in_noarch_packages_terminate_build 0
+%global __debug_install_post %{SOURCE100} %{efiarch} %{efialtarch}
+%undefine _debuginfo_subpackages
+
+# currently here's what's in our dbx: nothing
+%global dbxfile %{nil}
+
 Name:                 shim-unsigned-%{efiarch}
 Version:              15.8
-Release:              0.el9
+Release:              0%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
 URL:                  https://github.com/rhboot/shim
 Source0:              https://github.com/rhboot/shim/releases/download/%{version}/shim-%{version}.tar.bz2
-
-# currently here's what's in our dbx:
-# nothing.
-Source2:              dbx.esl
+%if 0%{?dbxfile}
+Source2:	%{dbxfile}
+%endif
 Source4:              shim.patches
 
 Source100:            shim-find-debuginfo.sh
@@ -60,37 +62,35 @@ use this package or when debugging this package.
 %desc
 
 %package -n shim-unsigned-%{efialtarch}
-Summary:              First-stage UEFI bootloader (unsigned data)
-Provides:             bundled(openssl) = %{openssl_vre}
+Summary:	First-stage UEFI bootloader (unsigned data)
+Provides:	bundled(openssl) = %{openssl_vre}
 
 %description -n shim-unsigned-%{efialtarch}
 %desc
 
 %package debuginfo
-Summary:              Debug information for shim-unsigned-%{efiarch}
-Requires:             %{name}-debugsource = %{version}-%{release}
-Group:                Development/Debug
-AutoReqProv:          0
-BuildArch:            noarch
+Summary:	Debug information for shim-unsigned-%{efiarch}
+Group:		Development/Debug
+AutoReqProv:	0
+BuildArch:	noarch
 
 %description debuginfo
 %debug_desc
 
 %package -n shim-unsigned-%{efialtarch}-debuginfo
-Summary:              Debug information for shim-unsigned-%{efialtarch}
-Group:                Development/Debug
-Requires:             %{name}-debugsource = %{version}-%{release}
-AutoReqProv:          0
-BuildArch:            noarch
+Summary:	Debug information for shim-unsigned-%{efialtarch}
+Group:		Development/Debug
+AutoReqProv:	0
+BuildArch:	noarch
 
 %description -n shim-unsigned-%{efialtarch}-debuginfo
 %debug_desc
 
 %package debugsource
-Summary:              Debug Source for shim-unsigned
-Group:                Development/Debug
-AutoReqProv:          0
-BuildArch:            noarch
+Summary:	Debug Source for shim-unsigned
+Group:		Development/Debug
+AutoReqProv:	0
+BuildArch:	noarch
 
 %description debugsource
 %debug_desc
@@ -113,19 +113,15 @@ MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
-if [ -s "%{SOURCE2}" ]; then
+%if 0%{?dbxfile}
+if [ -f "%{SOURCE2}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_DBX_FILE=%{SOURCE2}"
 fi
+%endif
 
 cd build-%{efiarch}
 make ${MAKEFLAGS} \
 	DEFAULT_LOADER='\\\\grub%{efiarch}.efi' \
-	all
-cd ..
-
-cd build-%{efialtarch}
-setarch linux32 -B make ${MAKEFLAGS} ARCH=%{efialtarch} \
-	DEFAULT_LOADER='\\\\grub%{efialtarch}.efi' \
 	all
 cd ..
 
@@ -133,24 +129,19 @@ cd ..
 COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
-MAKEFLAGS+="ENABLE_HTTPBOOT=true ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="ENABLE_SHIM_HASH=true "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
-if [ -s "%{SOURCE2}" ]; then
+%if 0%{?dbxfile}
+if [ -f "%{SOURCE2}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_DBX_FILE=%{SOURCE2}"
 fi
+%endif
 
 cd build-%{efiarch}
 make ${MAKEFLAGS} \
 	DEFAULT_LOADER='\\\\grub%{efiarch}.efi' \
-	DESTDIR=${RPM_BUILD_ROOT} \
-	install-as-data install-debuginfo install-debugsource
-cd ..
-
-cd build-%{efialtarch}
-setarch linux32 make ${MAKEFLAGS} ARCH=%{efialtarch} \
-	DEFAULT_LOADER='\\\\grub%{efialtarch}.efi' \
 	DESTDIR=${RPM_BUILD_ROOT} \
 	install-as-data install-debuginfo install-debugsource
 cd ..
@@ -160,24 +151,13 @@ cd ..
 %dir %{shimrootdir}
 %dir %{shimversiondir}
 %dir %{shimdir}
-%{shimdir}/*.CSV
 %{shimdir}/*.efi
 %{shimdir}/*.hash
-
-%files -n shim-unsigned-%{efialtarch}
-%license COPYRIGHT
-%dir %{shimrootdir}
-%dir %{shimversiondir}
-%dir %{shimaltdir}
-%{shimaltdir}/*.CSV
-%{shimaltdir}/*.efi
-%{shimaltdir}/*.hash
+%{shimdir}/*.CSV
 
 %files debuginfo -f build-%{efiarch}/debugfiles.list
 
-%files -n shim-unsigned-%{efialtarch}-debuginfo -f build-%{efialtarch}/debugfiles.list
-
-%files  debugsource -f build-%{efiarch}/debugsource.list
+%files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
