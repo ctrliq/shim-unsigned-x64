@@ -1,0 +1,30 @@
+From 00c86a51d0ce879aff1d3c9f3fb6217e73f8d179 Mon Sep 17 00:00:00 2001
+From: Peter Jones <pjones@redhat.com>
+Date: Wed, 7 Feb 2024 16:24:31 -0500
+Subject: [PATCH] dos2unix: fix flags for RHEL 7
+
+RHEL 7 has a version of dos2unix that doesn't support -f, and I couldn't
+figure out how to get rpm+shell+make to cooperate in setting the flags
+from the .spec file, so it's changed here instead.
+
+Signed-off-by: Peter Jones <pjones@redhat.com>
+---
+ Make.defaults | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Make.defaults b/Make.defaults
+index e75cd3cdd0b..87a4c6472fb 100644
+--- a/Make.defaults
++++ b/Make.defaults
+@@ -9,7 +9,7 @@ HOSTCC		= $(COMPILER)
+ LD		= $(CROSS_COMPILE)ld
+ OBJCOPY		= $(CROSS_COMPILE)objcopy
+ DOS2UNIX	?= dos2unix
+-D2UFLAGS	?= -r -l -F -f -n
++D2UFLAGS	?= -l -F -f -n
+ OPENSSL		?= openssl
+ HEXDUMP		?= hexdump
+ INSTALL		?= install
+-- 
+2.41.0
+

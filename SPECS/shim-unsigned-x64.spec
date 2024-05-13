@@ -18,7 +18,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              15.8
-Release:              0.el8
+Release:              0.el7
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD
@@ -36,17 +36,25 @@ Source90001:          ciq_sb_ca.der
 
 %include %{SOURCE4}
 
-BuildRequires:        gcc make
-BuildRequires:        elfutils-libelf-devel
-BuildRequires:        git openssl-devel openssl
-BuildRequires:        pesign >= %{pesign_vre}
-BuildRequires:        dos2unix findutils
+BuildRequires: binutils
+BuildRequires: dos2unix
+BuildRequires: gcc
+BuildRequires: git
+BuildRequires: efivar-devel efivar-libs
+BuildRequires: gnu-efi >= 1:3.0.5-6.el7
+BuildRequires: gnu-efi-devel >= 1:3.0.5-6.el7
+BuildRequires: openssl-devel
+BuildRequires: openssl
+BuildRequires: pesign >= 0.106-1
+BuildRequires: elfutils-libelf-devel
+
+# for xxd
+BuildRequires: vim-common
 
 # Shim uses OpenSSL, but cannot use the system copy as the UEFI ABI is not
 # compatible with SysV (there's no red zone under UEFI) and there isn't a
 # POSIX-style C library.
-# BuildRequires:	OpenSSL
-Provides:             bundled(openssl) = %{openssl_vre}
+Provides: bundled(openssl) = 1.0.2j
 
 %global desc \
 Initial UEFI bootloader that handles chaining to a trusted full \
@@ -133,7 +141,7 @@ cd ..
 COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
-MAKEFLAGS+="ENABLE_HTTPBOOT=true ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="ENABLE_HTTPBOOT=false ENABLE_SHIM_HASH=true "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
@@ -173,11 +181,13 @@ cd ..
 %{shimaltdir}/*.efi
 %{shimaltdir}/*.hash
 
-%files debuginfo -f build-%{efiarch}/debugfiles.list
+%define _unpackaged_files_terminate_build 0
 
-%files -n shim-unsigned-%{efialtarch}-debuginfo -f build-%{efialtarch}/debugfiles.list
+#%files debuginfo -f build-%{efiarch}/debugfiles.list
 
-%files  debugsource -f build-%{efiarch}/debugsource.list
+#%files -n shim-unsigned-%{efialtarch}-debuginfo -f build-%{efialtarch}/debugfiles.list
+
+#%files  debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
