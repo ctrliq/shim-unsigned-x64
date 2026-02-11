@@ -20,11 +20,11 @@
 %global dbxfile %{nil}
 
 Name:                 shim-unsigned-%{efiarch}
-Version:              15.8
-Release:              0%{?dist}
+Version:              16.1
+Release:              1.el9
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
-License:              BSD
+License:              BSD-2-Clause AND OpenSSL
 URL:                  https://github.com/rhboot/shim
 Source0:              https://github.com/rhboot/shim/releases/download/%{version}/shim-%{version}.tar.bz2
 %if 0%{?dbxfile}
@@ -96,7 +96,7 @@ BuildArch:	noarch
 %debug_desc
 
 %prep
-%autosetup -S git_am -n shim-%{version}
+%autosetup -S git -n shim-%{version}
 git config --unset user.email
 git config --unset user.name
 mkdir build-%{efiarch}
@@ -107,8 +107,10 @@ cp %{SOURCE90000} data/
 %build
 COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
+COMMIT_ID=afc49558b34548644c1cd0ad1b6526a9470182ed
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2024010900 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -128,6 +130,7 @@ cd ..
 %install
 COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
+COMMIT_ID=afc49558b34548644c1cd0ad1b6526a9470182ed
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_HTTPBOOT=true ENABLE_SHIM_HASH=true "
 if [ -s "%{SOURCE90001}" ]; then
@@ -160,6 +163,13 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-1.el9
+- Upgrade to upstream shim 16.1
+- Update SBAT generation to 3
+- Update license to BSD-2-Clause AND OpenSSL
+- Add ENABLE_SHIM_HASH and SBAT_AUTOMATIC_DATE build flags
+- Support for Unified Kernel Images (UKI)
+
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
 
