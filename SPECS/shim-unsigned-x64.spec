@@ -21,7 +21,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              16.1
-Release:              1.el9
+Release:              0%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD-2-Clause AND OpenSSL
@@ -163,7 +163,7 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
-* Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-1.el9
+* Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
 - Update SBAT generation to 3
 - Update license to BSD-2-Clause AND OpenSSL
