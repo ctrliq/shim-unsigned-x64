@@ -165,10 +165,7 @@ cd ..
 %changelog
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
-- Update SBAT generation to 3
-- Update license to BSD-2-Clause AND OpenSSL
-- Add ENABLE_SHIM_HASH and SBAT_AUTOMATIC_DATE build flags
-- Support for Unified Kernel Images (UKI)
+- Update SBAT generation to 2
 
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
