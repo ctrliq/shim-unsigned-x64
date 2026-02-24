@@ -17,11 +17,11 @@
 %global shimaltdir %{shimversiondir}/%{efialtarch}
 
 Name:                 shim-unsigned-%{efiarch}
-Version:              15.8
-Release:              0.el7
+Version:              16.1
+Release:              0%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
-License:              BSD
+License:              BSD-2-Clause AND OpenSSL
 URL:                  https://github.com/rhboot/shim
 Source0:              https://github.com/rhboot/shim/releases/download/%{version}/shim-%{version}.tar.bz2
 
@@ -190,6 +190,10 @@ cd ..
 #%files  debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
+- Upgrade to upstream shim 16.1
+- Update SBAT generation to 2
+
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
 
