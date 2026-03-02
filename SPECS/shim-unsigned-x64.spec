@@ -1,6 +1,7 @@
 %global pesign_vre 0.106-1
 %global gnuefi_vre 1:3.0.5-6
 %global openssl_vre 1.0.2j
+%global shim_commit_id afc49558b34548644c1cd0ad1b6526a9470182ed
 
 %global efidir %(eval echo $(grep ^ID= /etc/os-release | sed -e 's/^ID=//' -e 's/rhel/rocky/'))
 %global shimrootdir %{_datadir}/shim/
@@ -96,7 +97,7 @@ BuildArch:	noarch
 %debug_desc
 
 %prep
-%autosetup -S git -n shim-%{version}
+%autosetup -S git_am -n shim-%{version}
 git config --unset user.email
 git config --unset user.name
 mkdir build-%{efiarch}
@@ -105,12 +106,11 @@ cp %{SOURCE90000} data/
 
 
 %build
-COMMITID=$(cat commit)
-MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
-COMMIT_ID=afc49558b34548644c1cd0ad1b6526a9470182ed
+COMMIT_ID=%{shim_commit_id}
+MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
-MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2024010900 "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -128,11 +128,11 @@ make ${MAKEFLAGS} \
 cd ..
 
 %install
-COMMITID=$(cat commit)
-MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
-COMMIT_ID=afc49558b34548644c1cd0ad1b6526a9470182ed
+COMMIT_ID=%{shim_commit_id}
+MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
-MAKEFLAGS+="ENABLE_HTTPBOOT=true ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
@@ -165,7 +165,7 @@ cd ..
 %changelog
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
-- Update SBAT generation to 2
+- Set SBAT_AUTOMATIC_DATE to 2023012900 to enforce grub,3 as minimum SBAT generation
 
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
