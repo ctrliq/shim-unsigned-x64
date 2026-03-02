@@ -1,5 +1,4 @@
 %global pesign_vre 0.106-1
-%global gnuefi_vre 1:3.0.5-6
 %global openssl_vre 1.0.2j
 %global shim_commit_id afc49558b34548644c1cd0ad1b6526a9470182ed
 
@@ -103,7 +102,6 @@ git config --unset user.name
 mkdir build-%{efiarch}
 mkdir build-%{efialtarch}
 cp %{SOURCE90000} data/
-
 
 %build
 COMMIT_ID=%{shim_commit_id}
