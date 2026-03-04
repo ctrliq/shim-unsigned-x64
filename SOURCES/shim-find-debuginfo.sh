@@ -20,9 +20,9 @@ fi
 findsource()
 {
     (
-        cd ${RPM_BUILD_ROOT}
-        find usr/src/debug/ -type d | sed "s,^,%dir /,"
-        find usr/src/debug/ -type f | sed "s,^,/,"
+        cd "${RPM_BUILD_ROOT}"
+        find usr/src/debug/ -type d | sed -e "s,^,%dir /," | sort -u | tac
+        find usr/src/debug/ -type f | sed -e "s,^,/," | sort -u | tac
     )
 }
 
@@ -32,9 +32,12 @@ finddebug()
     declare -a dirs=()
     declare -a files=()
     declare -a excludes=()
+    declare -a tmp=()
 
-    pushd ${RPM_BUILD_ROOT} >/dev/null 2>&1
-    for x in $(find usr/lib/debug/ -type f -iname *.efi.debug); do
+    pushd "${RPM_BUILD_ROOT}" >/dev/null 2>&1
+
+    mapfile -t tmp < <(find usr/lib/debug/ -type f -iname "*.efi.debug")
+    for x in "${tmp[@]}" ; do
         if ! [ -e "${x}" ]; then
             break
         fi
@@ -57,8 +60,10 @@ finddebug()
             excludes[${#excludes[@]}]=${x%%.debug}
         fi
     done
-    for x in ${files[@]} ; do
-        declare name=$(dirname /${x})
+    for x in "${files[@]}" ; do
+        declare name
+
+        name=$(dirname "/${x}")
         while [ "${name}" != "/" ]; do
             case "${name}" in
             "/usr/lib/debug"|"/usr/lib"|"/usr")
@@ -67,24 +72,24 @@ finddebug()
                 dirs[${#dirs[@]}]=${name}
                 ;;
             esac
-            name=$(dirname ${name})
+            name=$(dirname "${name}")
         done
     done
 
     popd >/dev/null 2>&1
-    for x in ${dirs[@]} ; do
+    for x in "${dirs[@]}" ; do
         echo "%dir ${x}"
     done | sort | uniq
-    for x in ${files[@]} ; do
+    for x in "${files[@]}" ; do
         echo "/${x}"
     done | sort | uniq
-    for x in ${excludes[@]} ; do
+    for x in "${excludes[@]}" ; do
         echo "%exclude /${x}"
     done
 }
 
-findsource > build-${mainarch}/debugsource.list
-finddebug ${mainarch} > build-${mainarch}/debugfiles.list
+findsource > "build-${mainarch}/debugsource.list"
+finddebug "${mainarch}" > "build-${mainarch}/debugfiles.list"
 if [ -v altarch ]; then
-    finddebug ${altarch} > build-${altarch}/debugfiles.list
+    finddebug "${altarch}" > "build-${altarch}/debugfiles.list"
 fi
