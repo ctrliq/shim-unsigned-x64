@@ -108,7 +108,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
-MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025021800 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -130,7 +130,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
-MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025021800 "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
@@ -163,7 +163,7 @@ cd ..
 %changelog
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
-- Set SBAT_AUTOMATIC_DATE to 2023012900 to enforce grub,3 as minimum SBAT generation
+- Set SBAT_AUTOMATIC_DATE to 2025021800 to enforce grub,5 as minimum SBAT generation
 
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
