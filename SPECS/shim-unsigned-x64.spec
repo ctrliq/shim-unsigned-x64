@@ -64,6 +64,9 @@ use this package or when debugging this package.
 %package -n shim-unsigned-%{efialtarch}
 Summary:	First-stage UEFI bootloader (unsigned data)
 Provides:	bundled(openssl) = %{openssl_vre}
+# Tying grub sbat 5 to shim, this is just for demonstration
+# will be added to signed rpm pkg
+#Requires: grub2-efi-%{efialtarch} >= 2.06-114
 
 %description -n shim-unsigned-%{efialtarch}
 %desc
@@ -108,7 +111,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
-MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -130,7 +133,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
-MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2023012900 "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
@@ -163,7 +166,7 @@ cd ..
 %changelog
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
-- Set SBAT_AUTOMATIC_DATE to 2023012900 to enforce grub,3 as minimum SBAT generation
+- Set SBAT_AUTOMATIC_DATE to 2025051000 to enforce grub,5 as minimum SBAT generation
 
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
