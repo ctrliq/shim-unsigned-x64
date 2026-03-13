@@ -17,11 +17,11 @@
 %global shimaltdir %{shimversiondir}/%{efialtarch}
 
 Name:                 shim-unsigned-%{efiarch}
-Version:              15.8
-Release:              0.el7
+Version:              16.1
+Release:              0%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
-License:              BSD
+License:              BSD-2-Clause AND OpenSSL
 URL:                  https://github.com/rhboot/shim
 Source0:              https://github.com/rhboot/shim/releases/download/%{version}/shim-%{version}.tar.bz2
 
@@ -117,6 +117,7 @@ COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -142,6 +143,7 @@ COMMITID=$(cat commit)
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMITID=${COMMITID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_HTTPBOOT=false ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
 fi
@@ -190,6 +192,10 @@ cd ..
 #%files  debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
+- Upgrade to upstream shim 16.1
+- Set SBAT_AUTOMATIC_DATE to 2025051000 to enforce grub,5 as minimum SBAT generation
+
 * Tue Jan 23 2024 Jason Rodriguez <jrodriguez@ciq.com> - 15.8-0
 - Upgrading to Shim 15.8 For CIQ
 
