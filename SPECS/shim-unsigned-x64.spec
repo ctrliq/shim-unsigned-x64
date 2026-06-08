@@ -21,7 +21,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              16.1
-Release:              0%{?dist}
+Release:              1%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD-2-Clause AND OpenSSL
@@ -166,7 +166,7 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
-* Thu Jun 05 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-1
+* Fri Jun 05 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-1
 - Enable NX bit via POST_PROCESS_PE_FLAGS=-n
 
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
