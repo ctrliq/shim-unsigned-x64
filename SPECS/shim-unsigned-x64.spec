@@ -21,7 +21,7 @@
 
 Name:                 shim-unsigned-%{efiarch}
 Version:              16.1
-Release:              0%{?dist}
+Release:              1%{?dist}
 Summary:              First-stage UEFI bootloader
 ExclusiveArch:        x86_64
 License:              BSD-2-Clause AND OpenSSL
@@ -111,6 +111,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="POST_PROCESS_PE_FLAGS=-n "
 MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 MAKEFLAGS+="%{_smp_mflags}"
 if [ -s "%{SOURCE90001}" ]; then
@@ -133,6 +134,7 @@ COMMIT_ID=%{shim_commit_id}
 MAKEFLAGS="TOPDIR=.. -f ../Makefile COMMIT_ID=${COMMIT_ID} "
 MAKEFLAGS+="EFIDIR=%{efidir} PKGNAME=shim RELEASE=%{release} "
 MAKEFLAGS+="ENABLE_SHIM_HASH=true "
+MAKEFLAGS+="POST_PROCESS_PE_FLAGS=-n "
 MAKEFLAGS+="SBAT_AUTOMATIC_DATE=2025051000 "
 if [ -s "%{SOURCE90001}" ]; then
 	MAKEFLAGS="$MAKEFLAGS VENDOR_CERT_FILE=%{SOURCE90001}"
@@ -164,6 +166,9 @@ cd ..
 %files debugsource -f build-%{efiarch}/debugsource.list
 
 %changelog
+* Fri Jun 05 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-1
+- Enable NX bit via POST_PROCESS_PE_FLAGS=-n
+
 * Wed Feb 11 2026 Jason Rodriguez <jrodriguez@ciq.com> - 16.1-0
 - Upgrade to upstream shim 16.1
 - Set SBAT_AUTOMATIC_DATE to 2025051000 to enforce grub,5 as minimum SBAT generation
